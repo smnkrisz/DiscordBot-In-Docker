@@ -1,4 +1,4 @@
-# The most basic Discord bot in Docker. Created for fun and to know a tiny bit about it. 
+# The most basic Discord bot in Docker. Created for fun and to know a tiny bit about it.
 
 ### Step-by-step:
 
@@ -10,7 +10,8 @@
 6. Put `node_modules, package-lock.json` in `.dockerignore`,
 7. Put `node_modules, package-lock.json, .env` in `.gitignore`,
 8. Open index.js : `code index.js`,
-9. Paste the following lines in it : 
+9. Paste the following lines in it :
+
 ```crystal
 
 # use dotenv
@@ -25,38 +26,55 @@ const client = new Client({
 # login the bot via its token from Discord
 client.login(process.env.TOKEN);
 
+# fetch Chuck Norris jokes from the API
+function getJoke() {
+  return fetch("https://api.chucknorris.io/jokes/random")
+    .then((res) => res.json())
+    .then((json) => json.value);
+}
+
 # create simple actions
 client.on("message", (msg) => {
 
   if (msg.content === "Welcome") {
     msg.reply("Welcome to the server!");
   }
-  
+
   if (msg.content === "Hello bot!") {
     msg.reply("Jó napot teremtőm!");
   }
-  
+
   if (msg.content === "Ping") {
     msg.reply("Pong!");
+  }
+
+  if (msg.content === "Tell me a joke") {
+    getJoke().then((joke) => msg.reply(joke));
   }
 });
 
 client.on("ready", () => {
   console.log(`Logged in as ${client.user.tag}.`);
 });
-``` 
-8. Get bot token from Discord : 
- - Log in [Discord website](https://discord.com/),
- - Go to [Developer portal](https://discord.com/developers/applications),
- - Click on "New Application" and add a name,
- - Click on "Bot" and confirm it,
- - Copy Token and put it in `.env` file
-9. Invite the bot to the server : 
- - Click on "OAuth2" and select "bot",
- - Add permissions : `Send Messages, Manage Messages, Embed Links, Attach Files, Read Message History, Mention Everyone, Use External Emojis, Use External Stickers, Add Reactions, Read Messages/View Channels`
- - Copy "permissions integer" and copy to the browser, so you can invite the bot
+```
+
+8. Get bot token from Discord :
+
+- Log in [Discord website](https://discord.com/),
+- Go to [Developer portal](https://discord.com/developers/applications),
+- Click on "New Application" and add a name,
+- Click on "Bot" and confirm it,
+- Copy Token and put it in `.env` file
+
+9. Invite the bot to the server :
+
+- Click on "OAuth2" and select "bot",
+- Add permissions : `Send Messages, Manage Messages, Embed Links, Attach Files, Read Message History, Mention Everyone, Use External Emojis, Use External Stickers, Add Reactions, Read Messages/View Channels`
+- Copy "permissions integer" and copy to the browser, so you can invite the bot
+
 10. Create Dockerfile,
-11. Paste the following lines in it : 
+11. Paste the following lines in it :
+
 ```crystal
 # use the slim version of node
 FROM node:slim
@@ -74,7 +92,8 @@ COPY . /usr/src/bot
 # run the bot
 CMD ["node", "index.js"]
 ```
-12. Build the container : `docker build -t DiscordBot` ( use sudo if user doesn't have permission ),
-13. Run the container : `docker run -d DiscordBot`
+
+12. Build the container : `docker build -t discord-bot .` ( use sudo if user doesn't have permission ),
+13. Run the container : `docker run -d discord-bot`
 14. Check running container : `docker ps`
 15. If you want to stop is : `docker stop <containerID>`
